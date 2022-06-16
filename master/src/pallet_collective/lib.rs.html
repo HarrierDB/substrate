@@ -1128,6 +1128,7 @@
 <span id="1123">1123</span>
 <span id="1124">1124</span>
 <span id="1125">1125</span>
+<span id="1126">1126</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1178,7 +1179,7 @@
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>, <span class="ident">result</span>};
 
 <span class="kw">use</span> <span class="ident">frame_support</span>::{
-	<span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>},
+	<span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">MaxEncodedLen</span>},
 	<span class="ident">dispatch</span>::{<span class="ident">DispatchError</span>, <span class="ident">DispatchResultWithPostInfo</span>, <span class="ident">Dispatchable</span>, <span class="ident">PostDispatchInfo</span>},
 	<span class="ident">ensure</span>,
 	<span class="ident">traits</span>::{
@@ -1254,8 +1255,9 @@
 }
 
 <span class="doccomment">/// Origin for the collective module.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>, <span class="ident">MaxEncodedLen</span>)]</span>
 <span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(<span class="ident">I</span>))]</span>
+<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">mel_bound</span>(<span class="ident">AccountId</span>: <span class="ident">MaxEncodedLen</span>))]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">RawOrigin</span><span class="op">&lt;</span><span class="ident">AccountId</span>, <span class="ident">I</span><span class="op">&gt;</span> {
 	<span class="doccomment">/// It has been condoned by a given number of members of the collective from a given total.</span>
 	<span class="ident">Members</span>(<span class="ident">MemberCount</span>, <span class="ident">MemberCount</span>),

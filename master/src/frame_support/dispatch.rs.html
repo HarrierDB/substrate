@@ -2885,6 +2885,10 @@
 <span id="2880">2880</span>
 <span id="2881">2881</span>
 <span id="2882">2882</span>
+<span id="2883">2883</span>
+<span id="2884">2884</span>
+<span id="2885">2885</span>
+<span id="2886">2886</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2906,7 +2910,9 @@
 <span class="doccomment">//! generating values representing lazy module function calls.</span>
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::{
-	<span class="ident">codec</span>::{<span class="ident">Codec</span>, <span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">EncodeAsRef</span>, <span class="ident">EncodeLike</span>, <span class="ident">HasCompact</span>, <span class="ident">Input</span>, <span class="ident">Output</span>},
+	<span class="ident">codec</span>::{
+		<span class="ident">Codec</span>, <span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">EncodeAsRef</span>, <span class="ident">EncodeLike</span>, <span class="ident">HasCompact</span>, <span class="ident">Input</span>, <span class="ident">MaxEncodedLen</span>, <span class="ident">Output</span>,
+	},
 	<span class="ident">scale_info::TypeInfo</span>,
 	<span class="ident">sp_std</span>::{
 		<span class="ident">fmt</span>, <span class="ident">marker</span>,
@@ -2950,7 +2956,7 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">CallableCallFor</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">R</span><span class="op">&gt;</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Callable</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Call</span>;
 
 <span class="doccomment">/// Origin for the System pallet.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>, <span class="ident">MaxEncodedLen</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">RawOrigin</span><span class="op">&lt;</span><span class="ident">AccountId</span><span class="op">&gt;</span> {
 	<span class="doccomment">/// The system itself ordained this dispatch to happen: this is the highest privilege level.</span>
 	<span class="ident">Root</span>,
@@ -5585,7 +5591,9 @@
 		}
 	}
 
-	<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">TypeInfo</span>, <span class="ident"><span class="kw">crate</span>::RuntimeDebug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>)]</span>
+	<span class="attribute">#[<span class="ident">derive</span>(
+		<span class="ident">TypeInfo</span>, <span class="ident"><span class="kw">crate</span>::RuntimeDebug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">MaxEncodedLen</span>,
+	)]</span>
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OuterOrigin</span>;
 
 	<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RawOrigin</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">TraitImpl</span> <span class="kw">as</span> <span class="ident">system::Config</span><span class="op">&gt;</span><span class="ident">::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OuterOrigin</span> {

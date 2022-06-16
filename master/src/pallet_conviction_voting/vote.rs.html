@@ -257,6 +257,11 @@
 <span id="252">252</span>
 <span id="253">253</span>
 <span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -421,6 +426,7 @@
 <span class="doccomment">/// Information concerning the direct vote-casting of some voting power.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">TypeInfo</span>, <span class="ident">MaxEncodedLen</span>)]</span>
 <span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(<span class="ident">MaxVotes</span>))]</span>
+<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">mel_bound</span>(<span class="ident">Balance</span>: <span class="ident">MaxEncodedLen</span>, <span class="ident">BlockNumber</span>: <span class="ident">MaxEncodedLen</span>, <span class="ident">PollIndex</span>: <span class="ident">MaxEncodedLen</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Casting</span><span class="op">&lt;</span><span class="ident">Balance</span>, <span class="ident">BlockNumber</span>, <span class="ident">PollIndex</span>, <span class="ident">MaxVotes</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">MaxVotes</span>: <span class="ident">Get</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
@@ -436,6 +442,10 @@
 <span class="doccomment">/// An indicator for what an account is doing; it can either be delegating or voting.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">TypeInfo</span>, <span class="ident">MaxEncodedLen</span>)]</span>
 <span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(<span class="ident">MaxVotes</span>))]</span>
+<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">mel_bound</span>(
+	<span class="ident">Balance</span>: <span class="ident">MaxEncodedLen</span>, <span class="ident">AccountId</span>: <span class="ident">MaxEncodedLen</span>, <span class="ident">BlockNumber</span>: <span class="ident">MaxEncodedLen</span>,
+	<span class="ident">PollIndex</span>: <span class="ident">MaxEncodedLen</span>,
+))]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Voting</span><span class="op">&lt;</span><span class="ident">Balance</span>, <span class="ident">AccountId</span>, <span class="ident">BlockNumber</span>, <span class="ident">PollIndex</span>, <span class="ident">MaxVotes</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">MaxVotes</span>: <span class="ident">Get</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,

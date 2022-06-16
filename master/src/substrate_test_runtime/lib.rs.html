@@ -1394,7 +1394,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">genesismap</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">system</span>;
 
-<span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">Error</span>, <span class="ident">Input</span>};
+<span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">Error</span>, <span class="ident">Input</span>, <span class="ident">MaxEncodedLen</span>};
 <span class="kw">use</span> <span class="ident">scale_info::TypeInfo</span>;
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">marker::PhantomData</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
 
@@ -1810,7 +1810,7 @@
 	<span class="kw">type</span> <span class="ident">RuntimeBlock</span> <span class="op">=</span> <span class="ident">Block</span>;
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">TypeInfo</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">TypeInfo</span>, <span class="ident">MaxEncodedLen</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Origin</span>;
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">frame_system::Origin</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Origin</span> {

@@ -380,6 +380,11 @@
 <span id="375">375</span>
 <span id="376">376</span>
 <span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -400,6 +405,7 @@
 <span class="doccomment">//! Traits for dealing with dispatching calls and the origin from which they are dispatched.</span>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::dispatch</span>::{<span class="ident">DispatchResultWithPostInfo</span>, <span class="ident">Parameter</span>, <span class="ident">RawOrigin</span>};
+<span class="kw">use</span> <span class="ident">codec::MaxEncodedLen</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">traits</span>::{<span class="ident">BadOrigin</span>, <span class="ident">Member</span>, <span class="ident">Morph</span>, <span class="ident">TryMorph</span>},
 	<span class="ident">Either</span>,
@@ -640,7 +646,11 @@
 	<span class="kw">type</span> <span class="ident">Call</span>;
 
 	<span class="doccomment">/// The caller origin, overarching type of all pallets origins.</span>
-	<span class="kw">type</span> <span class="ident">PalletsOrigin</span>: <span class="ident">Parameter</span> <span class="op">+</span> <span class="ident">Member</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RawOrigin</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+	<span class="kw">type</span> <span class="ident">PalletsOrigin</span>: <span class="ident">Parameter</span>
+		<span class="op">+</span> <span class="ident">Member</span>
+		<span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+		<span class="op">+</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">RawOrigin</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::AccountId</span><span class="op">&gt;</span><span class="op">&gt;</span>
+		<span class="op">+</span> <span class="ident">MaxEncodedLen</span>;
 
 	<span class="doccomment">/// The AccountId used across the system.</span>
 	<span class="kw">type</span> <span class="ident">AccountId</span>;
