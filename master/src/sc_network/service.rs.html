@@ -2259,6 +2259,7 @@
 <span id="2254">2254</span>
 <span id="2255">2255</span>
 <span id="2256">2256</span>
+<span id="2257">2257</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2640,7 +2641,8 @@
 				)
 				.<span class="ident">substream_upgrade_protocol_override</span>(<span class="ident">upgrade::Version::V1Lazy</span>)
 				.<span class="ident">notify_handler_buffer_size</span>(<span class="ident">NonZeroUsize::new</span>(<span class="number">32</span>).<span class="ident">expect</span>(<span class="string">&quot;32 != 0; qed&quot;</span>))
-				.<span class="ident">connection_event_buffer_size</span>(<span class="number">1024</span>);
+				.<span class="ident">connection_event_buffer_size</span>(<span class="number">1024</span>)
+				.<span class="ident">max_negotiating_inbound_streams</span>(<span class="number">2048</span>);
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">spawner</span>) <span class="op">=</span> <span class="ident">params</span>.<span class="ident">executor</span> {
 				<span class="kw">struct</span> <span class="ident">SpawnImpl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">F</span>);
 				<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Future</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> ()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>)<span class="op">&gt;</span> <span class="ident">Executor</span> <span class="kw">for</span> <span class="ident">SpawnImpl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> {

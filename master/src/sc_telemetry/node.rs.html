@@ -328,6 +328,8 @@
 <span id="323">323</span>
 <span id="324">324</span>
 <span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -440,7 +442,6 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">TTrans</span>: <span class="ident">Transport</span>, <span class="ident">TSinkErr</span><span class="op">&gt;</span> <span class="ident">Node</span><span class="op">&lt;</span><span class="ident">TTrans</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-	<span class="ident">TTrans</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Unpin</span>,
 	<span class="ident">TTrans::Dial</span>: <span class="ident">Unpin</span>,
 	<span class="ident">TTrans::Output</span>:
 		<span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">TSinkErr</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TSinkErr</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Unpin</span>,
@@ -467,7 +468,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">TTrans</span>: <span class="ident">Transport</span>, <span class="ident">TSinkErr</span><span class="op">&gt;</span> <span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">TelemetryPayload</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Node</span><span class="op">&lt;</span><span class="ident">TTrans</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-	<span class="ident">TTrans</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Unpin</span>,
+	<span class="ident">TTrans</span>: <span class="ident">Unpin</span>,
 	<span class="ident">TTrans::Dial</span>: <span class="ident">Unpin</span>,
 	<span class="ident">TTrans::Output</span>:
 		<span class="ident">Sink</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">TSinkErr</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TSinkErr</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Unpin</span>,
@@ -558,15 +559,18 @@
 						<span class="ident">socket</span> <span class="op">=</span> <span class="ident">NodeSocket::wait_reconnect</span>();
 					},
 				},
-				<span class="ident">NodeSocket::ReconnectNow</span> =&gt; <span class="kw">match</span> <span class="self">self</span>.<span class="ident">transport</span>.<span class="ident">clone</span>().<span class="ident">dial</span>(<span class="self">self</span>.<span class="ident">addr</span>.<span class="ident">clone</span>()) {
-					<span class="prelude-val">Ok</span>(<span class="ident">d</span>) =&gt; {
-						<span class="macro">log::trace!</span>(<span class="ident">target</span>: <span class="string">&quot;telemetry&quot;</span>, <span class="string">&quot;Re-dialing {}&quot;</span>, <span class="self">self</span>.<span class="ident">addr</span>);
-						<span class="ident">socket</span> <span class="op">=</span> <span class="ident">NodeSocket::Dialing</span>(<span class="ident">d</span>);
-					},
-					<span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
-						<span class="macro">log::warn!</span>(<span class="ident">target</span>: <span class="string">&quot;telemetry&quot;</span>, <span class="string">&quot;❌ Error while re-dialing {}: {:?}&quot;</span>, <span class="self">self</span>.<span class="ident">addr</span>, <span class="ident">err</span>);
-						<span class="ident">socket</span> <span class="op">=</span> <span class="ident">NodeSocket::wait_reconnect</span>();
-					},
+				<span class="ident">NodeSocket::ReconnectNow</span> =&gt; {
+					<span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">addr</span>.<span class="ident">clone</span>();
+					<span class="kw">match</span> <span class="self">self</span>.<span class="ident">transport</span>.<span class="ident">dial</span>(<span class="ident">addr</span>) {
+						<span class="prelude-val">Ok</span>(<span class="ident">d</span>) =&gt; {
+							<span class="macro">log::trace!</span>(<span class="ident">target</span>: <span class="string">&quot;telemetry&quot;</span>, <span class="string">&quot;Re-dialing {}&quot;</span>, <span class="self">self</span>.<span class="ident">addr</span>);
+							<span class="ident">socket</span> <span class="op">=</span> <span class="ident">NodeSocket::Dialing</span>(<span class="ident">d</span>);
+						},
+						<span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
+							<span class="macro">log::warn!</span>(<span class="ident">target</span>: <span class="string">&quot;telemetry&quot;</span>, <span class="string">&quot;❌ Error while re-dialing {}: {:?}&quot;</span>, <span class="self">self</span>.<span class="ident">addr</span>, <span class="ident">err</span>);
+							<span class="ident">socket</span> <span class="op">=</span> <span class="ident">NodeSocket::wait_reconnect</span>();
+						},
+					}
 				},
 				<span class="ident">NodeSocket::WaitingReconnect</span>(<span class="kw-2">mut</span> <span class="ident">s</span>) =&gt; {
 					<span class="kw">if</span> <span class="ident">Future::poll</span>(<span class="ident">Pin::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">s</span>), <span class="ident">cx</span>).<span class="ident">is_ready</span>() {
