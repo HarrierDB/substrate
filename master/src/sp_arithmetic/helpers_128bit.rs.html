@@ -311,70 +311,6 @@
 <span id="306">306</span>
 <span id="307">307</span>
 <span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
-<span id="311">311</span>
-<span id="312">312</span>
-<span id="313">313</span>
-<span id="314">314</span>
-<span id="315">315</span>
-<span id="316">316</span>
-<span id="317">317</span>
-<span id="318">318</span>
-<span id="319">319</span>
-<span id="320">320</span>
-<span id="321">321</span>
-<span id="322">322</span>
-<span id="323">323</span>
-<span id="324">324</span>
-<span id="325">325</span>
-<span id="326">326</span>
-<span id="327">327</span>
-<span id="328">328</span>
-<span id="329">329</span>
-<span id="330">330</span>
-<span id="331">331</span>
-<span id="332">332</span>
-<span id="333">333</span>
-<span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
-<span id="364">364</span>
-<span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
-<span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
-<span id="371">371</span>
-<span id="372">372</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -399,12 +335,7 @@
 <span class="doccomment">//! multiplication implementation provided there.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">biguint</span>, <span class="ident">Rounding</span>};
-<span class="kw">use</span> <span class="ident">num_traits::Zero</span>;
-<span class="kw">use</span> <span class="ident">sp_std</span>::{
-	<span class="ident">cmp</span>::{<span class="ident">max</span>, <span class="ident">min</span>},
-	<span class="ident">convert::TryInto</span>,
-	<span class="ident">mem</span>,
-};
+<span class="kw">use</span> <span class="ident">sp_std::cmp</span>::{<span class="ident">max</span>, <span class="ident">min</span>};
 
 <span class="doccomment">/// Helper gcd function used in Rational128 implementation.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gcd</span>(<span class="ident">a</span>: <span class="ident">u128</span>, <span class="ident">b</span>: <span class="ident">u128</span>) -&gt; <span class="ident">u128</span> {
@@ -436,65 +367,6 @@
 	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">biguint::BigUint::from_limbs</span>(<span class="kw-2">&amp;</span>[<span class="ident">xhh</span>, <span class="ident">xhl</span>, <span class="ident">xlh</span>, <span class="ident">xll</span>]);
 	<span class="ident">n</span>.<span class="ident">lstrip</span>();
 	<span class="ident">n</span>
-}
-
-<span class="doccomment">/// Safely and accurately compute `a * b / c`. The approach is:</span>
-<span class="doccomment">///   - Simply try `a * b / c`.</span>
-<span class="doccomment">///   - Else, convert them both into big numbers and re-try. `Err` is returned if the result cannot</span>
-<span class="doccomment">///     be safely casted back to u128.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Invariant: c must be greater than or equal to 1.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">multiply_by_rational</span>(<span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">u128</span>, <span class="kw-2">mut</span> <span class="ident">b</span>: <span class="ident">u128</span>, <span class="kw-2">mut</span> <span class="ident">c</span>: <span class="ident">u128</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u128</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-	<span class="kw">if</span> <span class="ident">a</span>.<span class="ident">is_zero</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_zero</span>() {
-		<span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Zero::zero</span>())
-	}
-	<span class="ident">c</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">max</span>(<span class="number">1</span>);
-
-	<span class="comment">// a and b are interchangeable by definition in this function. It always helps to assume the</span>
-	<span class="comment">// bigger of which is being multiplied by a `0 &lt; b/c &lt; 1`. Hence, a should be the bigger and</span>
-	<span class="comment">// b the smaller one.</span>
-	<span class="kw">if</span> <span class="ident">b</span> <span class="op">&gt;</span> <span class="ident">a</span> {
-		<span class="ident">mem::swap</span>(<span class="kw-2">&amp;mut</span> <span class="ident">a</span>, <span class="kw-2">&amp;mut</span> <span class="ident">b</span>);
-	}
-
-	<span class="comment">// Attempt to perform the division first</span>
-	<span class="kw">if</span> <span class="ident">a</span> <span class="op">%</span> <span class="ident">c</span> <span class="op">==</span> <span class="number">0</span> {
-		<span class="ident">a</span> <span class="op">/</span><span class="op">=</span> <span class="ident">c</span>;
-		<span class="ident">c</span> <span class="op">=</span> <span class="number">1</span>;
-	} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">%</span> <span class="ident">c</span> <span class="op">==</span> <span class="number">0</span> {
-		<span class="ident">b</span> <span class="op">/</span><span class="op">=</span> <span class="ident">c</span>;
-		<span class="ident">c</span> <span class="op">=</span> <span class="number">1</span>;
-	}
-
-	<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span> <span class="ident">a</span>.<span class="ident">checked_mul</span>(<span class="ident">b</span>) {
-		<span class="comment">// This is the safest way to go. Try it.</span>
-		<span class="prelude-val">Ok</span>(<span class="ident">x</span> <span class="op">/</span> <span class="ident">c</span>)
-	} <span class="kw">else</span> {
-		<span class="kw">let</span> <span class="ident">a_num</span> <span class="op">=</span> <span class="ident">to_big_uint</span>(<span class="ident">a</span>);
-		<span class="kw">let</span> <span class="ident">b_num</span> <span class="op">=</span> <span class="ident">to_big_uint</span>(<span class="ident">b</span>);
-		<span class="kw">let</span> <span class="ident">c_num</span> <span class="op">=</span> <span class="ident">to_big_uint</span>(<span class="ident">c</span>);
-
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ab</span> <span class="op">=</span> <span class="ident">a_num</span> <span class="op">*</span> <span class="ident">b_num</span>;
-		<span class="ident">ab</span>.<span class="ident">lstrip</span>();
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">q</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">c_num</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span> {
-			<span class="comment">// PROOF: if `c_num.len() == 1` then `c` fits in one limb.</span>
-			<span class="ident">ab</span>.<span class="ident">div_unit</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">biguint::Single</span>)
-		} <span class="kw">else</span> {
-			<span class="comment">// PROOF: both `ab` and `c` cannot have leading zero limbs; if length of `c` is 1,</span>
-			<span class="comment">// the previous branch would handle. Also, if ab for sure has a bigger size than</span>
-			<span class="comment">// c, because `a.checked_mul(b)` has failed, hence ab must be at least one limb</span>
-			<span class="comment">// bigger than c. In this case, returning zero is defensive-only and div should</span>
-			<span class="comment">// always return Some.</span>
-			<span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">q</span>, <span class="ident">r</span>) <span class="op">=</span> <span class="ident">ab</span>.<span class="ident">div</span>(<span class="kw-2">&amp;</span><span class="ident">c_num</span>, <span class="bool-val">true</span>).<span class="ident">unwrap_or</span>((<span class="ident">Zero::zero</span>(), <span class="ident">Zero::zero</span>()));
-			<span class="kw">let</span> <span class="ident">r</span>: <span class="ident">u128</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">try_into</span>().<span class="ident">expect</span>(<span class="string">&quot;reminder of div by c is always less than c; qed&quot;</span>);
-			<span class="kw">if</span> <span class="ident">r</span> <span class="op">&gt;</span> (<span class="ident">c</span> <span class="op">/</span> <span class="number">2</span>) {
-				<span class="ident">q</span> <span class="op">=</span> <span class="ident">q</span>.<span class="ident">add</span>(<span class="kw-2">&amp;</span><span class="ident">to_big_uint</span>(<span class="number">1</span>));
-			}
-			<span class="ident">q</span>
-		};
-		<span class="ident">q</span>.<span class="ident">lstrip</span>();
-		<span class="ident">q</span>.<span class="ident">try_into</span>().<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;result cannot fit in u128&quot;</span>)
-	}
 }
 
 <span class="kw">mod</span> <span class="ident">double128</span> {
@@ -624,7 +496,7 @@
 }
 
 <span class="doccomment">/// Returns `a * b / c` and `(a * b) % c` (wrapping to 128 bits) or `None` in the case of</span>
-<span class="doccomment">/// overflow.</span>
+<span class="doccomment">/// overflow and c = 0.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">multiply_by_rational_with_rounding</span>(
 	<span class="ident">a</span>: <span class="ident">u128</span>,
 	<span class="ident">b</span>: <span class="ident">u128</span>,
@@ -633,7 +505,7 @@
 ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u128</span><span class="op">&gt;</span> {
 	<span class="kw">use</span> <span class="ident">double128::Double128</span>;
 	<span class="kw">if</span> <span class="ident">c</span> <span class="op">==</span> <span class="number">0</span> {
-		<span class="macro">panic!</span>(<span class="string">&quot;attempt to divide by zero&quot;</span>)
+		<span class="kw">return</span> <span class="prelude-val">None</span>
 	}
 	<span class="kw">let</span> (<span class="ident">result</span>, <span class="ident">remainder</span>) <span class="op">=</span> <span class="ident">Double128::product_of</span>(<span class="ident">a</span>, <span class="ident">b</span>).<span class="ident">div</span>(<span class="ident">c</span>);
 	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span>: <span class="ident">u128</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span>.<span class="ident">try_into_u128</span>() {
@@ -738,7 +610,7 @@
 			<span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">random_u128</span>(<span class="ident">i</span> <span class="op">+</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>));
 			<span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">random_u128</span>(<span class="ident">i</span> <span class="op">+</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span>));
 			<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">mulrat</span>(<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">NearestPrefDown</span>);
-			<span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">multiply_by_rational</span>(<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>).<span class="ident">ok</span>();
+			<span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">multiply_by_rational_with_rounding</span>(<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">Rounding::NearestPrefDown</span>);
 			<span class="macro">assert_eq!</span>(<span class="ident">x</span>.<span class="ident">is_some</span>(), <span class="ident">y</span>.<span class="ident">is_some</span>());
 			<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">x</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>);
 			<span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">y</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>);

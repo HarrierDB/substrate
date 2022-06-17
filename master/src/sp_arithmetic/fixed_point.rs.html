@@ -2200,6 +2200,22 @@
 <span id="2195">2195</span>
 <span id="2196">2196</span>
 <span id="2197">2197</span>
+<span id="2198">2198</span>
+<span id="2199">2199</span>
+<span id="2200">2200</span>
+<span id="2201">2201</span>
+<span id="2202">2202</span>
+<span id="2203">2203</span>
+<span id="2204">2204</span>
+<span id="2205">2205</span>
+<span id="2206">2206</span>
+<span id="2207">2207</span>
+<span id="2208">2208</span>
+<span id="2209">2209</span>
+<span id="2210">2210</span>
+<span id="2211">2211</span>
+<span id="2212">2212</span>
+<span id="2213">2213</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -2220,7 +2236,7 @@
 <span class="doccomment">//! Decimal Fixed Point implementations for Substrate runtime.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-	<span class="ident">helpers_128bit</span>::{<span class="ident">multiply_by_rational</span>, <span class="ident">multiply_by_rational_with_rounding</span>, <span class="ident">sqrt</span>},
+	<span class="ident">helpers_128bit</span>::{<span class="ident">multiply_by_rational_with_rounding</span>, <span class="ident">sqrt</span>},
 	<span class="ident">traits</span>::{
 		<span class="ident">Bounded</span>, <span class="ident">CheckedAdd</span>, <span class="ident">CheckedDiv</span>, <span class="ident">CheckedMul</span>, <span class="ident">CheckedNeg</span>, <span class="ident">CheckedSub</span>, <span class="ident">One</span>,
 		<span class="ident">SaturatedConversion</span>, <span class="ident">Saturating</span>, <span class="ident">UniqueSaturatedInto</span>, <span class="ident">Zero</span>,
@@ -2353,10 +2369,14 @@
 		<span class="kw">let</span> <span class="ident">d</span>: <span class="ident">I129</span> <span class="op">=</span> <span class="ident">d</span>.<span class="ident">into</span>();
 		<span class="kw">let</span> <span class="ident">negative</span> <span class="op">=</span> <span class="ident">n</span>.<span class="ident">negative</span> <span class="op">!</span><span class="op">=</span> <span class="ident">d</span>.<span class="ident">negative</span>;
 
-		<span class="ident">multiply_by_rational</span>(<span class="ident">n</span>.<span class="ident">value</span>, <span class="ident"><span class="self">Self</span>::DIV</span>.<span class="ident">unique_saturated_into</span>(), <span class="ident">d</span>.<span class="ident">value</span>)
-			.<span class="ident">ok</span>()
-			.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
-			.<span class="ident">map</span>(<span class="ident"><span class="self">Self</span>::from_inner</span>)
+		<span class="ident">multiply_by_rational_with_rounding</span>(
+			<span class="ident">n</span>.<span class="ident">value</span>,
+			<span class="ident"><span class="self">Self</span>::DIV</span>.<span class="ident">unique_saturated_into</span>(),
+			<span class="ident">d</span>.<span class="ident">value</span>,
+			<span class="ident">Rounding::from_signed</span>(<span class="ident">SignedRounding::Minor</span>, <span class="ident">negative</span>),
+		)
+		.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
+		.<span class="ident">map</span>(<span class="ident"><span class="self">Self</span>::from_inner</span>)
 	}
 
 	<span class="doccomment">/// Checked multiplication for integer type `N`. Equal to `self * n`.</span>
@@ -2367,9 +2387,13 @@
 		<span class="kw">let</span> <span class="ident">rhs</span>: <span class="ident">I129</span> <span class="op">=</span> <span class="ident">n</span>.<span class="ident">into</span>();
 		<span class="kw">let</span> <span class="ident">negative</span> <span class="op">=</span> <span class="ident">lhs</span>.<span class="ident">negative</span> <span class="op">!</span><span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">negative</span>;
 
-		<span class="ident">multiply_by_rational</span>(<span class="ident">lhs</span>.<span class="ident">value</span>, <span class="ident">rhs</span>.<span class="ident">value</span>, <span class="ident"><span class="self">Self</span>::DIV</span>.<span class="ident">unique_saturated_into</span>())
-			.<span class="ident">ok</span>()
-			.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
+		<span class="ident">multiply_by_rational_with_rounding</span>(
+			<span class="ident">lhs</span>.<span class="ident">value</span>,
+			<span class="ident">rhs</span>.<span class="ident">value</span>,
+			<span class="ident"><span class="self">Self</span>::DIV</span>.<span class="ident">unique_saturated_into</span>(),
+			<span class="ident">Rounding::from_signed</span>(<span class="ident">SignedRounding::Minor</span>, <span class="ident">negative</span>),
+		)
+		.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
 	}
 
 	<span class="doccomment">/// Saturating multiplication for integer type `N`. Equal to `self * n`.</span>
@@ -3034,10 +3058,14 @@
 				<span class="comment">// is equivalent to the `SignedRounding::NearestPrefMinor`. This means it is</span>
 				<span class="comment">// expected to give exactly the same result as `const_checked_div` when the result</span>
 				<span class="comment">// is positive and a result up to one epsilon greater when it is negative.</span>
-				<span class="ident">multiply_by_rational</span>(<span class="ident">lhs</span>.<span class="ident">value</span>, <span class="ident"><span class="self">Self</span>::DIV</span> <span class="kw">as</span> <span class="ident">u128</span>, <span class="ident">rhs</span>.<span class="ident">value</span>)
-					.<span class="ident">ok</span>()
-					.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
-					.<span class="ident">map</span>(<span class="self">Self</span>)
+				<span class="ident">multiply_by_rational_with_rounding</span>(
+					<span class="ident">lhs</span>.<span class="ident">value</span>,
+					<span class="ident"><span class="self">Self</span>::DIV</span> <span class="kw">as</span> <span class="ident">u128</span>,
+					<span class="ident">rhs</span>.<span class="ident">value</span>,
+					<span class="ident">Rounding::from_signed</span>(<span class="ident">SignedRounding::Minor</span>, <span class="ident">negative</span>),
+				)
+				.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
+				.<span class="ident">map</span>(<span class="self">Self</span>)
 			}
 		}
 
@@ -3047,10 +3075,14 @@
 				<span class="kw">let</span> <span class="ident">rhs</span>: <span class="ident">I129</span> <span class="op">=</span> <span class="ident">other</span>.<span class="number">0</span>.<span class="ident">into</span>();
 				<span class="kw">let</span> <span class="ident">negative</span> <span class="op">=</span> <span class="ident">lhs</span>.<span class="ident">negative</span> <span class="op">!</span><span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">negative</span>;
 
-				<span class="ident">multiply_by_rational</span>(<span class="ident">lhs</span>.<span class="ident">value</span>, <span class="ident">rhs</span>.<span class="ident">value</span>, <span class="ident"><span class="self">Self</span>::DIV</span> <span class="kw">as</span> <span class="ident">u128</span>)
-					.<span class="ident">ok</span>()
-					.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
-					.<span class="ident">map</span>(<span class="self">Self</span>)
+				<span class="ident">multiply_by_rational_with_rounding</span>(
+					<span class="ident">lhs</span>.<span class="ident">value</span>,
+					<span class="ident">rhs</span>.<span class="ident">value</span>,
+					<span class="ident"><span class="self">Self</span>::DIV</span> <span class="kw">as</span> <span class="ident">u128</span>,
+					<span class="ident">Rounding::from_signed</span>(<span class="ident">SignedRounding::Minor</span>, <span class="ident">negative</span>),
+				)
+				.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">from_i129</span>(<span class="ident">I129</span> { <span class="ident">value</span>, <span class="ident">negative</span> }))
+				.<span class="ident">map</span>(<span class="self">Self</span>)
 			}
 		}
 
